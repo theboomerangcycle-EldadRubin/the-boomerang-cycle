@@ -1,0 +1,15 @@
+Copyright (c) 2025 [Eldad Rubin, The Boomerang Cycle]
+
+All rights reserved.
+
+This project, including all source code, documentation, PDFs, text, images, and
+any other included files ("the Work"), is made available solely for review
+purposes. 
+
+No permission is granted to use, copy, modify, merge, publish, distribute,
+sublicense, or sell the Work, in whole or in part, without the prior written
+approval of the copyright holder.
+
+To request permission, please contact:
+[Eldad Rubin]
+[theboomerangcycle@gmail.com]
