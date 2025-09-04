@@ -1,0 +1,28 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode Category 8 - Admin Panel - Backend
+
+FUNCTION AdminListUsers(filter: UserFilter, pagination: Pagination) -> UserList
+    authorizeAdmin()
+    users = DB.QueryUsers(filter, pagination)
+    RETURN users
+END
+
+FUNCTION AdminSetUserStatus(adminID: UserID, targetUserID: UserID, status: "suspend"|"activate", reason: string)
+    authorizeAdmin()
+    DB.UpdateUserStatus(targetUserID, status)
+    logAudit("admin_set_user_status", {adminID, targetUserID, status, reason, timestamp: Now()})
+    NotifyUser(targetUserID, "Your account status changed: " + status)
+    RETURN success
+END
+
+FUNCTION AdminViewAuditLog(adminID: UserID, query: AuditQuery) -> AuditResults
+    authorizeAdmin()
+    results = AuditLog.Search(query)
+    RETURN results
+END
+
+
+Compliance: All admin actions are logged immutably; privileged access requires MFA.

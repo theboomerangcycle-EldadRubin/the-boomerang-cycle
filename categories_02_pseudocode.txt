@@ -1,0 +1,16 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+User Dashboard - Main Menu (Sidebar)
+
+FUNCTION Display_Sidebar_Menu()
+    DISPLAY: Collapsed Navigation Icon
+    DISPLAY: Expanded Sidebar with Menu Items
+        MENU_ITEM_1: "Dashboard"
+        MENU_ITEM_2: "Donation History"
+        MENU_ITEM_3: "Recipient Tracking"
+        MENU_ITEM_4: "Profile Settings"
+        MENU_ITEM_5: "Premium Membership"
+    DISPLAY: Icons for Each Menu Item
+END FUNCTION

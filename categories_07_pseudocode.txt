@@ -1,0 +1,11 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+Reporting & Analytics
+
+FUNCTION Generate_User_Reports(userID)
+    DISPLAY: Donation History (Dates, Amounts, Recipients)
+    DISPLAY: Received Amounts (Total Payouts as Recipient)
+    DISPLAY: Tax Forms (e.g., IRS Form 1099-MISC)
+END FUNCTION

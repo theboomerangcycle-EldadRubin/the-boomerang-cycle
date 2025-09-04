@@ -1,0 +1,25 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode Category 11 — Legal & Compliance (Tax Forms, Reporting)
+
+FUNCTION GenerateRegionTaxForms(userID: UserID, year: int) -> List<TaxForm>
+    jurisdiction = GetUserJurisdiction(userID)
+    donations = DB.QueryDonations(userID, year)
+    received = DB.QueryAllocationsReceived(userID, year)
+    totals = CalculateTotals(donations, received)
+    forms = []
+    IF jurisdiction == "US" AND totals.payouts >= TaxThreshold_US:
+        form1099 = RenderForm1099(userID, totals)
+        forms.append(form1099)
+    ELSE:
+        formLocal = RenderLocalTaxForm(userID, totals, jurisdiction)
+        forms.append(formLocal)
+    ENDIF
+    SecurelyEmailForms(userID, forms)
+    logAudit("tax_forms_generated", {userID, year, jurisdiction})
+    RETURN forms
+END
+
+Note: Use external tax partner integrations for accuracy.

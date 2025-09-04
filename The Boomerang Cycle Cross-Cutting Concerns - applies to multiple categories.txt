@@ -1,0 +1,67 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+
+The Boomerang Cycle Cross-Cutting Concerns (applies to multiple categories)
+
+Logging & Audit
+
+Use append-only audit log for financial and admin events.
+
+Retain audit logs per regional compliance rules.
+
+Encryption & Secrets
+
+All PII: encrypted at rest with KMS.
+
+Use HSM/KMS for keys. Rotate keys regularly.
+
+Rate-Limiting & Anti-Abuse
+
+Global rate limits per IP and per user (e.g., max 10 donations/day).
+
+Device and behavioral fingerprinting for fraud detection.
+
+Testing & QA
+
+Unit tests for allocation algorithms.
+
+Integration tests for payment flows and cycle processing (simulate high-volume bursts).
+
+Contract tests for APIs.
+
+Observability
+
+Metrics: number of donors/sec, allocations/sec, queue depth, avg latency.
+
+Tracing for critical flows (donation → tokenization → allocation → payout).
+
+Compliance
+
+KYC/AML: risk-based checks for large cumulative withdrawals or flagged accounts.
+
+Jurisdiction-aware tax and reporting outputs.
+
+Transparency & Governance
+
+Public transparency dashboard exposing non-PII aggregate stats.
+
+Open-source repository with verifiable builds and reproducible audit traces.
+
+Developer Handoff Checklist (for each category)
+
+ Data model (ERD) for donors, donations, cycles, intervals, allocations, premiums, audit logs.
+
+ API spec (OpenAPI) for donation creation, payment webhooks, cycle status, admin endpoints.
+
+ Background job design (queues, retries, dead-letter handling) for allocation & payouts.
+
+ Security design doc (encryption, KMS, IAM, vulnerability scanning).
+
+ Compliance runbook (KYC thresholds, tax form rules by region, data retention policy).
+
+ Test cases for functional flows and edge conditions (failed payments, partial intervals).
+
+ Operations runbook (deployment, rollback, incident triage, runbook links).
+

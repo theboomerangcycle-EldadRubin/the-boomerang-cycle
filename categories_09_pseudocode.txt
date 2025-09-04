@@ -1,0 +1,11 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+System Logic & Rules
+
+FUNCTION Define_Interval_Boundaries()
+    CALCULATE: Total Donors in 24-Hour Period
+    DETERMINE: Number of Intervals (Up to 1,440 Max)
+    ASSIGN: Time Slots for Each Interval
+END FUNCTION

@@ -1,0 +1,11 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+Legal & Compliance
+
+FUNCTION Generate_Tax_Forms(userID)
+    CALCULATE: Total Donations and Payouts for Year
+    GENERATE: IRS Form 1099-MISC or Equivalent
+    SEND: Form to User via Email
+END FUNCTION

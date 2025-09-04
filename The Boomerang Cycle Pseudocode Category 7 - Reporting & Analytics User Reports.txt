@@ -1,0 +1,22 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode Category 7 - Reporting & Analytics User Reports
+
+FUNCTION GenerateUserReport(userID: UserID, year: int) -> UserReport
+    # Security: verify requester is user or authorized (admin)
+    authorizeRequestor(userID)
+
+    donationHistory = DB.QueryDonations(userID, year)
+    receivedAllocations = DB.QueryAllocationsReceived(userID, year)
+    taxableSummaries = ComputeTaxableTotals(donationHistory, receivedAllocations, jurisdiction=GetUserJurisdiction(userID))
+    # Optionally render IRS Form 1099-MISC or local equivalent (region-specific)
+    taxForms = GenerateRegionTaxForms(userID, taxableSummaries)
+    report = UserReport(donationHistory, receivedAllocations, taxForms)
+    logAudit("user_report_generated", {userID, year})
+    RETURN report
+END
+
+
+Notes: tax form generation must be region-aware; do not produce US forms for non-US users.

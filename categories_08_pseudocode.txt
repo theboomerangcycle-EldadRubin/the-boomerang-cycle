@@ -1,0 +1,11 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+Admin Panel/Backend
+
+FUNCTION Admin_Manage_Users()
+    DISPLAY: User List (Searchable by Name, Email, etc.)
+    ALLOW: Admin to Suspend/Activate Accounts
+    LOG: All Admin Actions for Compliance
+END FUNCTION

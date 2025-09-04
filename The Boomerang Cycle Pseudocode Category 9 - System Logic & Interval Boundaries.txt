@@ -1,0 +1,24 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode Category 9 - System Logic & Interval Boundaries
+
+FUNCTION ComputeDailyIntervals(startTime: Timestamp) -> List<IntervalSlot>
+    # Count donors in rolling 24-hour window: use time-bucketed counters (for scale)
+    donorCount = Metrics.GetDonorCount(windowStart = startTime, windowEnd = startTime + 24h)
+    donorsPerInterval = recipientsPerInterval * ratio  # ratio = 231 for standard, 50 for premium
+    intervalCount = min(floor(donorCount / donorsPerInterval), 1440)
+    IF intervalCount == 0 THEN
+        RETURN []
+    ENDIF
+    # Create intervals with assigned time slots (e.g., minute granularity)
+    intervals = []
+    FOR i in 0..intervalCount-1:
+        slotStart = startTime + i * (24h / intervalCount)
+        intervals.append(IntervalSlot(index=i+1, start=slotStart, end=slotStart + (24h/intervalCount)))
+    ENDFOR
+    RETURN intervals
+END
+
+Edge Cases: if donors exceed max cycle capacity, create overflow cycles and shard by region.

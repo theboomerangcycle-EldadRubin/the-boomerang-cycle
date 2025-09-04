@@ -1,0 +1,28 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode Category 6 - Premium Membership Activation
+
+FUNCTION ActivatePremiumMembership(userID: UserID, paymentMethod: PaymentMethod) -> MembershipReceipt
+    # Preconditions: user must have at least one standard donation on record
+    IF NOT DB.HasStandardDonation(userID) THEN
+        raise Error("PremiumRequiresStandardDonation")
+    ENDIF
+
+    # Charge annual fee
+    paymentIntent = PaymentGateway.CreateIntent(amount: 100.00, currency: "USD", metadata: {userID})
+    paymentResult = PaymentGateway.Confirm(paymentIntent)
+    IF paymentResult.status != "succeeded" THEN
+        logAudit("premium_payment_failed", {userID, paymentResult})
+        raise Error("PaymentFailed")
+    ENDIF
+
+    # Grant premium entitlements
+    premiumRecord = DB.CreatePremiumRecord(userID, startDate=Now(), expiry=Now() + 1 year, maxEntriesPerYear=30)
+    logAudit("premium_activated", {userID, premiumID: premiumRecord.id})
+    RETURN MembershipReceipt(premiumID=premiumRecord.id, status="active")
+END
+
+
+Security: run KYC check for high-risk regions if needed; store membership metadata encrypted.

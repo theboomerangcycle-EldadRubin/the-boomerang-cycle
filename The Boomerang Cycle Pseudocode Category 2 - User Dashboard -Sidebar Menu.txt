@@ -1,0 +1,23 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode - Category 2 — User Dashboard (Sidebar Menu)
+
+FUNCTION RenderSidebarMenu(user: User) -> SidebarComponent
+    items = [
+        MenuItem(id: "dashboard", label: "Dashboard", icon: "home", route: "/dashboard"),
+        MenuItem(id: "donationHistory", label: "Donation History", icon: "history", route: "/donations"),
+        MenuItem(id: "recipientTracking", label: "Recipient Tracking", icon: "map", route: "/recipients"),
+        MenuItem(id: "profile", label: "Profile Settings", icon: "user", route: "/profile"),
+        MenuItem(id: "premium", label: "Premium Membership", icon: "star", route: "/premium")
+    ]
+    IF user.isAdmin THEN
+        items.append(MenuItem(id:"admin", label:"Admin Panel", icon:"shield", route:"/admin"))
+    ENDIF
+    RETURN Sidebar(items = items, collapsed = GetUserPreference(user, "sidebarCollapsed"))
+END
+
+
+Notes: Icons accessible via SVG sprite; accessibility ARIA attributes required.
+

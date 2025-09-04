@@ -1,0 +1,19 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode Category 3 — User Dashboard Sections
+
+FUNCTION RenderDashboard(user: User) -> DashboardPage
+    # Dashboard aggregates user-specific metrics and educational content
+    donationMetrics = GetDonationMetrics(user)      # totalDonated, totalReceivedAsRecipient, unitsDonated
+    recipientChart = BuildRecipientRatioChart(user) # visualizes donor-to-recipient ratio exposures
+    howItWorksBlock = RenderHowItWorksSnippet()    # brief, legal-safe language (no gambling)
+    premiumBlock = RenderPremiumBenefits(user)     # only if user.isPremium or eligible
+    notifications = GetUserNotifications(user)
+    RETURN DashboardPage(metrics: donationMetrics, chart: recipientChart,
+                         howItWorks: howItWorksBlock, premium: premiumBlock,
+                         notifications: notifications)
+END
+
+Notes: Use server-side caching for heavy metrics; update caches on donation events.

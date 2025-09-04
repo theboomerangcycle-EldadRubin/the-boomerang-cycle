@@ -1,0 +1,31 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode Category 10 - Security & Privacy
+
+FUNCTION EncryptUserData(plainData: Dict) -> EncryptedBlob
+    # Use AES-256-GCM or equivalent, keys stored in KMS (e.g., AWS KMS)
+    key = KMS.GetDataKey("user-data")
+    encrypted = AES_GCM_Encrypt(key, Serialize(plainData))
+    RETURN encrypted
+END
+
+FUNCTION HandleUserDeletionRequest(requesterID: UserID, targetUserID: UserID) -> DeletionReceipt
+    authorizeUserAction(requesterID, action="delete", target=targetUserID)
+    # GDPR/CCPA: mark account as pending deletion, then purge after retention window if necessary
+    DB.MarkUserForDeletion(targetUserID, requestedAt=Now())
+    enqueue(PerformDeletionJob, targetUserID, delay=retentionWindowIfRequired(targetUserID))
+    logAudit("user_deletion_requested", {requesterID, targetUserID})
+    RETURN DeletionReceipt(status="scheduled")
+END
+
+FUNCTION PerformDeletionJob(userID: UserID)
+    # Remove PII from DB, preserve anonymized ledger for audit & financial reconciliation
+    anonymizeUserRecords(userID)
+    revokeAccessTokens(userID)
+    logAudit("user_deleted", {userID, timestamp: Now()})
+    RETURN success
+END
+
+Notes: Keep transaction ledger entries (non-PII) for accounting while removing PII.

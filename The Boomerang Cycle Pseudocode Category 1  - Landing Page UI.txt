@@ -1,0 +1,17 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode - Category 1 — Landing Page UI
+
+FUNCTION DisplayLandingPage() -> UIPage
+    # Purpose: Public marketing/home page that frames the platform as philanthropy/reciprocity.
+    RENDER HeroSection(title: "Help Yourself by Helping Others")
+    RENDER ValueProposition(text: "Join the Boomerang Cycle: Small Donations. Global Support.")
+    RENDER CallToAction(buttonText: "Sign Up Now", target: "/signup")
+    RENDER ImpactStats(stats: GetPublicImpactStats())   # live numbers: donors, recipients helped, countries
+    RENDER TrustBar(links: [TransparencyReport, HowItWorks, Terms])
+    RETURN UIPage
+END
+
+Notes: include privacy and "not a lottery" badge on hero; analytics event page_view.home.

@@ -1,0 +1,28 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+Donation Process Functionality
+
+// Step 1: Donation Amount Selection Screen
+FUNCTION Display_Donation_Amount_Selection()
+    DISPLAY: Information on Donation Units ($6 + $0.15 Fee = $6.15 per Unit)
+    DISPLAY: Numeric Input Field (Range: 1–10 Units)
+    ALLOW: User to Specify Number of Donation Units
+END FUNCTION
+
+// Step 2: Payment Method Selection
+FUNCTION Display_Payment_Method_Options()
+    DEFINE AVAILABLE_PAYMENT_METHODS = [
+        {methodName: "Credit Card", methodDisplayName: "Credit Card", methodIconName: "credit_card_icon"},
+        {methodName: "PayPal", methodDisplayName: "PayPal", methodIconName: "paypal_icon"},
+        {methodName: "Crypto", methodDisplayName: "Cryptocurrency", methodIconName: "crypto_icon"}
+    ]
+    DISPLAY: Payment Method Options with Icons and Labels
+END FUNCTION
+
+// Step 3: Confirmation Screen
+FUNCTION Confirm_Donation()
+    DISPLAY: Summary of Donation Details (Amount, Payment Method, Units)
+    PROMPT: User Confirmation ("Confirm Donation?")
+END FUNCTION

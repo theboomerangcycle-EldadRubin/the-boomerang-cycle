@@ -1,0 +1,11 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+Future Roadmap
+
+FUNCTION Add_Future_Features()
+    IMPLEMENT: AI Fraud Detection
+    SUPPORT: Multi-Chain Cryptocurrency Integration
+    ENABLE: DAO Governance for Platform Decisions
+END FUNCTION

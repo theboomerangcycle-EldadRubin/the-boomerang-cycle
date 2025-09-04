@@ -1,0 +1,61 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+The Boomerang Cycle Pseudocode Category 5 - Recipient Selection & Cycle Management - Core Engine
+
+# Data Model:
+# DonorEntry { entryID, donorID, cycleID, timestamp, microTokens: int }
+# Cycle { cycleID, type: STANDARD|PREMIUM, startTime, status, intervalCount, donorCount, recipientSlots }
+
+FUNCTION CycleManager_AddDonorEntry(donorID: UserID, microTokenID: TokenID, cycleType: CycleType = STANDARD) -> EntryAck
+    # Add donor entry into the current open cycle for cycleType
+    cycle = GetOrCreateActiveCycle(cycleType)
+    DB.InsertDonorEntry(cycle.cycleID, donorID, microTokenID)
+    cycle.donorCount += 1
+    IF cycle.donorCount >= cycle.MaxDonors THEN
+        # close interval(s) and trigger allocation
+        enqueue(CycleManager_AllocateCycle, cycle.cycleID)
+    ENDIF
+    RETURN EntryAck(cycleID: cycle.cycleID)
+END
+
+FUNCTION CycleManager_AllocateCycle(cycleID: CycleID)
+    cycle = DB.GetCycle(cycleID)
+    # Determine number of intervals filled
+    donorsPerInterval = cycle.recipientsPerInterval * cycle.ratio  # e.g., 6 * 231 = 1386
+    intervalCount = floor(cycle.donorCount / donorsPerInterval)
+    IF intervalCount == 0 THEN
+        # Not enough donors to allocate; wait for more or close after timeout
+        scheduleRetry(cycleID, delay = 15 minutes)
+        RETURN
+    ENDIF
+
+    # For each filled interval, select recipient slots and allocate micro-tokens
+    FOR i in 1..intervalCount:
+        intervalDonorEntries = DB.FetchAndReserveDonorEntries(cycle.cycleID, donorsPerInterval)
+        # Compute recipient selection: randomly selected donors (but algorithmic, auditable)
+        recipientIDs = SelectRecipientsAlgorithmic(intervalDonorEntries, recipientsPerInterval=6)
+        # Allocate micro-tokens: aggregate micro-tokens from donor entries => distribute among recipient slots
+        allocations = AllocateMicroTokens(intervalDonorEntries, recipientIDs)
+        DB.InsertAllocations(allocations)   # ledger entries for payouts
+        # Enqueue payout processing to payment/balance engine
+        enqueue(ProcessAllocationsPayouts, allocations.id)
+        logAudit("interval_allocated", {cycleID, intervalIndex: i, recipients: recipientIDs})
+    ENDFOR
+
+    # If leftover donors exist, keep them in the active cycle
+    cycle.donorCount = cycle.donorCount - intervalCount * donorsPerInterval
+    DB.UpdateCycle(cycle)
+END
+
+# NOTE: SelectRecipientsAlgorithmic should be deterministic given a seed + audited RNG service.
+# It must be auditable and tamper-evident (e.g., verifiable seed logged).
+
+
+
+Important Compliance & Implementation Notes:
+
+Use an auditable RNG or deterministic selection method with public proof to avoid “chance” perception.
+
+All allocations must be ledgered for finance audits.

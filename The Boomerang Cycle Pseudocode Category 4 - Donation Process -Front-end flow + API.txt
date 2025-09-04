@@ -1,0 +1,67 @@
+# © 2025 Eldad Rubin, The Boomerang Cycle. All rights reserved.
+# This file is part of a restricted project.
+# No use, copying, or distribution is permitted without prior written approval.
+
+
+Category 4 - Donation Process -Front-end flow + API
+
+FUNCTION ShowDonationUnitSelection(user: Optional[User]) -> UIForm
+    DISPLAY text: "Donation unit = $6.00 (plus $0.15 processing fee)."
+    INPUT units: Integer in [1..10] default 1
+    DISPLAY estimatedTotal = units * 6.15
+    RETURN DonationForm(units)
+END
+
+FUNCTION CreatePaymentIntent(user: Optional[User], units: int, paymentMethod: PaymentMethod) -> PaymentIntent
+    IF units < 1 OR units > 10 THEN
+        raise Error("InvalidUnitCount")
+    ENDIF
+
+    totalAmountUSD = units * 6.15
+    # Create payment intent via payment provider (Stripe/PayPal)
+    paymentIntent = PaymentGateway.CreateIntent(amount: totalAmountUSD, currency: "USD", metadata: {userID: user?.id, units: units})
+    logAudit("payment_intent_created", {userID: user?.id, intentID: paymentIntent.id, units})
+    RETURN paymentIntent
+END
+
+# Webhook handler invoked by payment provider
+FUNCTION HandlePaymentConfirmation(intentID: string, providerPayload) -> DonationReceipt
+    payment = PaymentGateway.Retrieve(intentID)
+    IF payment.status != "succeeded" THEN
+        logAudit("payment_failed", {intentID, providerPayload})
+        raise Error("PaymentFailed")
+    ENDIF
+
+    # Convert to internal donation record(s) and enqueue processing
+    donationRecord = CreateDonationRecord(payment)
+    enqueue(ProcessDonation, donationRecord.id)
+    RETURN DonationReceipt(donationID: donationRecord.id, status: "queued")
+END
+
+# Background worker
+FUNCTION ProcessDonation(donationID: DonationID)
+    donation = DB.GetDonation(donationID)
+    TRY
+        # Split into micro-tokens (1$ units)
+        tokens = SplitIntoMicroTokens(donation)  # returns list of MicroToken objects
+        # Record token ledger entries (audit)
+        DB.InsertMicroTokens(tokens)
+        # Add donors to active cycle queue
+        FOR each token in tokens:
+            CycleManager.AddDonorEntry(token.donorID, token.donationUnitID)
+        ENDFOR
+        logAudit("donation_processed", {donationID})
+    EXCEPT Exception as e:
+        logError(e)
+        logAudit("donation_processing_error", {donationID, error: e.message})
+        raise
+    END
+END
+
+
+Note: Security & Compliance Hooks:
+
+Before CreatePaymentIntent: rate-limit per IP, check KYC flags.
+
+Payment data never stored unencrypted; PCI scope minimized by using gateway tokens.
+
